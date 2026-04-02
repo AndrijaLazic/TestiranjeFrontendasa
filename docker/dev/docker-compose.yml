@@ -1,0 +1,48 @@
+name: srecno<3
+services:
+  init-python-app-ownership:
+    build:
+      context: ../../
+      dockerfile: docker/dev/python/Dockerfile
+      args:
+        APP_UID: "${UID:-1000}"
+        APP_GID: "${GID:-1000}"
+    user: "root"
+    command: sh -c "mkdir -p /python-app/python-app && chown -R ${UID:-1000}:${GID:-1000} /python-app/python-app"
+    volumes:
+      - ../../:/python-app
+    restart: "no"
+
+  python-app:
+    build:
+      # context starts in root folder
+      context: ../../
+      dockerfile: docker/dev/python/Dockerfile
+      args:
+        APP_UID: "${UID:-1000}"
+        APP_GID: "${GID:-1000}"
+    user: "app"
+    depends_on:
+      init-python-app-ownership:
+        condition: service_completed_successfully
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      HOME: /home/app
+    volumes:
+      - ../../:/python-app
+    working_dir: /python-app/python-app
+    command: sh -c "sleep infinity"
+    ports:
+      - "${PYTHON_APP_PORT:-8100}:8100"
+    networks:
+      - fmea_network
+    # cpus: 1.0
+    # mem_limit: 1g
+    # mem_reservation: 512m
+
+networks:
+  fmea_network:
+    external: true
