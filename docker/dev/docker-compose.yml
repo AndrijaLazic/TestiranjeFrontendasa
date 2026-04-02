@@ -34,7 +34,7 @@ services:
     volumes:
       - ../../:/python-app
     working_dir: /python-app/python-app
-    command: sh -c "sleep infinity"
+    command: sh -c "uv sync && sleep infinity"
     ports:
       - "${PYTHON_APP_PORT:-8100}:8100"
     networks:

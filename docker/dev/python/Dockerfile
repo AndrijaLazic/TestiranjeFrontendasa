@@ -8,7 +8,8 @@ WORKDIR /python-app
 
 # Source code is bind-mounted by docker-compose in development.
 
-ENV UV_PROJECT_ENVIRONMENT=/usr/local
+ENV UV_PROJECT_ENVIRONMENT=/python-app/python-app/.venv
+ENV PATH="/python-app/python-app/.venv/bin:${PATH}"
 
 # Install build tools and Python packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
