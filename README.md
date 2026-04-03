@@ -6,3 +6,7 @@
 
 #Pristupite swagger-u preko: 
 - http://localhost:8389/swagger
+
+#U aplikaciji postoje 2 korisnika:
+- admin admin123
+- user user123

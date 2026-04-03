@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from models import Category, Product, SubCategory
 from schemas.requests import ProductCreateRequest, ProductPatchRequest
+from schemas.responses import ProductSortedDTO
 from services.exceptions import NotFoundError, ValidationError
 from state.store import InMemoryStore
 
@@ -18,11 +19,12 @@ class CatalogService:
             raise NotFoundError("Category not found")
         return self.store.subcategories_by_category_id[category_id]
 
-    def list_products_sorted(self) -> list[Product]:
-        return sorted(
+    def list_products_sorted(self) -> list[ProductSortedDTO]:
+        products = sorted(
             self.store.products_by_id.values(),
             key=lambda product: (product.category_id, product.sub_category_id, product.id),
         )
+        return [self._to_sorted_product_dto(product) for product in products]
 
     def create_product(self, payload: ProductCreateRequest) -> Product:
         category, subcategory = self._validate_category_subcategory(
@@ -84,3 +86,15 @@ class CatalogService:
             raise ValidationError("Invalid sub_category_id for the provided category_id")
 
         return category, subcategory
+
+    @staticmethod
+    def _to_sorted_product_dto(product: Product) -> ProductSortedDTO:
+        return ProductSortedDTO(
+            id=product.id,
+            category_id=product.category_id,
+            category_name=product.category,
+            subcategory_id=product.sub_category_id,
+            subcategory_name=product.sub_category,
+            price=product.price,
+            name=product.name,
+        )

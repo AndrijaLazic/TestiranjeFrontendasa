@@ -73,7 +73,7 @@ async def test_get_products_returns_seeded_sorted_results(client: httpx.AsyncCli
     products = response.json()
     assert len(products) == 1000
 
-    sort_keys = [(item["category_id"], item["sub_category_id"], item["id"]) for item in products]
+    sort_keys = [(item["category_id"], item["subcategory_id"], item["id"]) for item in products]
     assert sort_keys == sorted(sort_keys)
 
 
@@ -126,7 +126,7 @@ async def test_admin_can_create_product_with_auto_incremented_id(client: httpx.A
     after = (await client.get("/products", headers=headers)).json()
     assert len(after) == 1001
     assert any(item["id"] == created["id"] for item in after)
-    sort_keys = [(item["category_id"], item["sub_category_id"], item["id"]) for item in after]
+    sort_keys = [(item["category_id"], item["subcategory_id"], item["id"]) for item in after]
     assert sort_keys == sorted(sort_keys)
 
 

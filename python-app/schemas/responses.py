@@ -22,6 +22,16 @@ class SubCategoryResponse(BaseModel):
     name: str
 
 
+class ProductSortedDTO(BaseModel):
+    id: int
+    category_id: int
+    category_name: str
+    subcategory_id: int
+    subcategory_name: str
+    price: float = Field(ge=0)
+    name: str
+
+
 class ProductResponse(BaseModel):
     id: int
     category_id: int

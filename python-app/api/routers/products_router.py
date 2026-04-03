@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+import random
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Response, status
@@ -13,7 +15,7 @@ from api.openapi_errors import (
 )
 from models import Product, UserSession
 from schemas.requests import ProductCreateRequest, ProductPatchRequest
-from schemas.responses import ProductResponse
+from schemas.responses import ProductResponse, ProductSortedDTO
 from services.catalog_service import CatalogService
 from services.exceptions import NotFoundError, ValidationError
 
@@ -26,7 +28,7 @@ def _to_product_response(product: Product) -> ProductResponse:
 
 @router.get(
     "/products",
-    response_model=list[ProductResponse],
+    response_model=list[ProductSortedDTO],
     responses={
         **UNAUTHORIZED_RESPONSE,
     },
@@ -34,9 +36,9 @@ def _to_product_response(product: Product) -> ProductResponse:
 async def list_products(
     _: Annotated[UserSession, Depends(get_current_session)],
     catalog: Annotated[CatalogService, Depends(get_catalog_service)],
-) -> list[ProductResponse]:
-    products = catalog.list_products_sorted()
-    return [_to_product_response(product) for product in products]
+) -> list[ProductSortedDTO]:
+    await asyncio.sleep(random.uniform(0, 5))
+    return catalog.list_products_sorted()
 
 
 @router.post(
